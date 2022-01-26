@@ -1,9 +1,15 @@
-# Wordle
+# Wordle Solver
 
-This program gives a complete algorithmic solution to the Wordle puzzle. The optimization is done by maximizing the information entropy gain for each guess over all posible five-letter word choices. It suggests the next response based on the Wordle response until the cypher word is uniquely determined.
+This program gives a complete algorithmic solution to the Wordle puzzle. The optimization is done by maximizing the information entropy gain for each guess over all posible five-letter word choices. It suggests the next guess based on the Wordle response until the cypher word is uniquely determined.
 
-Wordle.ipynb contains the algoritm and and auxillary routines .
+The algorithm was able to complete 100% of the full list of 2,315 Wordle answers in 8,017 total guesses for an average of 3.4631 guesses per word. On hard mode, the algorithm completed 99.65% of words in 6 guesses or less, with an average of 3.6810 guesses per word.
 
-sgb-words.text contains Donald Knuth's Graph Base of 5-letter words, which is used as a data set:
+WordleSolver.ipynb contains the solution algorithm.
 
-Donald E. Knuth. 1993. The Stanford GraphBase: a platform for combinatorial computing. Association for Computing Machinery, New York, NY, USA. https://www-cs-faculty.stanford.edu/~knuth/sgb.html
+WordleFunctions.ipynb contains auxillary functions for the program.
+
+WordleSolverEvaluation.ipynb contains code for evaluating algorithm performance againt the complete list of Wordle answers.
+
+wordle-answers-alphabetical.txt contains the list of 2,315 possible Wordle answers.
+
+wordle-aceptable-guesses.txt contains an additional 10,657 words which are considered acceptable guesses.
