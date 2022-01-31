@@ -63,7 +63,7 @@ def hardModeFilter(word,guess,sig):
 def cypher(words,key):
     return words.apply(lambda x: wordle(x,key)).rename("cypher")
 
-# computes the information entropy of a series of categorical values
+# Computes the information entropy of a series of categorical values
 #   series: a pandas series
 #   returns float containing the numerical entropy of the categorical distribution
 def entropy(series):
@@ -85,21 +85,34 @@ def entropy(series):
 # which maximizes information entropy after being applied to all possible answers.
 # Applies a 'boost' to guesses which are possible answers to account for the 
 # possiblity that they may give the correct answer immediately
-#   possibleWords: pandas series containing all reamaining possible answers
+#   possibleWords: pandas series containing all reamaining possible answers, must be a indexed subseries of allWords
 #   allWords: pandas series containing all possible guesses, can be larger than the answer space
 #   returns the 5-letter word which is the most informative guess
-def nextWord(possibleWords,allWords):
+def nextWord(possibleWords,allWords,hardMode=False):
     n=len(possibleWords)
     ans=""
     m=0
     for i in range(len(allWords)):
-        word=allWords.iloc[i]
+        word=allWords.iloc[i] # next guess under consideration
         series=cypher(possibleWords,word)
         e=entropy(series)
-        # apply a boost for words which are still candiates
-        # boost is positive since np.log(1-1/n)<0
-        if i in possibleWords.index:
+        if not hardMode and i in possibleWords.index:
+            # apply a boost for words which are still candiates
+            # boost is positive since np.log(1-1/n)<0
             e-=(1-1/n)*np.log(1-1/n)
+        if hardMode:
+            # code to compute information value for hardMode
+            for sig in series.unique():
+                remainingGuesses=allWords[allWords.apply(lambda x: hardModeFilter(x,word,sig))] #filter the possible words
+                nextPossibleWords=possibleWords[series==sig] #filter the possible answers
+                p=len(nextPossibleWords)/n # proportion of possible words which match the current sig
+                nextMaxEntropy=0
+                for nextGuess in remainingGuesses:
+                    nextSeries=cypher(nextPossibleWords,nextGuess)
+                    nextEntropy=entropy(nextSeries)
+                    if nextEntropy>nextMaxEntropy:
+                        nextMaxEntropy=nextEntropy
+                e+=p*nextMaxEntropy
         if e>m:
             m=e
             ans=word
