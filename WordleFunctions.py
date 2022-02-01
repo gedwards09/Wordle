@@ -37,6 +37,8 @@ def wordle(answer,guess):
 #   return: T/F if word can be considered in future guesses
 def hardModeFilter(word,guess,sig):
     dic={}
+    if word==guess:
+        return False
     for i in range(5):
         # keep count of the "Y" chars that must appear in 
         # each possible guess
@@ -84,9 +86,11 @@ def entropy(series):
 # Determines the best next guess by choosing the word from the pool of all remaining guesses
 # which maximizes information entropy after being applied to all possible answers.
 # Applies a 'boost' to guesses which are possible answers to account for the 
-# possiblity that they may give the correct answer immediately
+# possiblity that they may give the correct answer immediately.
 #   possibleWords: pandas series containing all reamaining possible answers, must be a indexed subseries of allWords
 #   allWords: pandas series containing all possible guesses, can be larger than the answer space
+#   hardMode: True/False for if the solver should use hard mode guessing.
+#       Hard mode is still in beta testing.
 #   returns the 5-letter word which is the most informative guess
 def nextWord(possibleWords,allWords,hardMode=False):
     n=len(possibleWords)
