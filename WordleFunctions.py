@@ -87,7 +87,8 @@ def entropy(series):
 # which maximizes information entropy after being applied to all possible answers.
 # Applies a 'boost' to guesses which are possible answers to account for the 
 # possiblity that they may give the correct answer immediately.
-#   possibleWords: pandas series containing all reamaining possible answers, must be a indexed subseries of allWords
+#   possibleWords: pandas series containing all reamaining possible answers.
+#       Must be a indexed subseries of allWords.
 #   allWords: pandas series containing all possible guesses, can be larger than the answer space
 #   hardMode: True/False for if the solver should use hard mode guessing.
 #       Hard mode is still in beta testing.
