@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time
 
 # Determines the Wordle response for a given guess and answer pair
 #   answer: the hidden 5-letter code word
@@ -97,6 +98,8 @@ def nextWord(possibleWords,allWords,hardMode=False):
     n=len(possibleWords)
     ans=""
     m=0
+    cnt=0
+    startTime=time.time()
     for i in range(len(allWords)):
         word=allWords.iloc[i] # next guess under consideration
         series=cypher(possibleWords,word)
@@ -108,16 +111,18 @@ def nextWord(possibleWords,allWords,hardMode=False):
         if hardMode:
             # code to compute information value for hardMode
             for sig in series.unique():
-                remainingGuesses=allWords[allWords.apply(lambda x: hardModeFilter(x,word,sig))] #filter the possible words
                 nextPossibleWords=possibleWords[series==sig] #filter the possible answers
-                p=len(nextPossibleWords)/n # proportion of possible words which match the current sig
                 nextMaxEntropy=0
-                for nextGuess in remainingGuesses:
-                    nextSeries=cypher(nextPossibleWords,nextGuess)
-                    nextEntropy=entropy(nextSeries)
+                for nextGuess in allWords[allWords.apply(lambda x: hardModeFilter(x,word,sig))]:
+                    nextEntropy=entropy(cypher(nextPossibleWords,nextGuess))
                     if nextEntropy>nextMaxEntropy:
                         nextMaxEntropy=nextEntropy
-                e+=p*nextMaxEntropy
+                    if nextMaxEntropy>=np.log(n):
+                        break
+                e+=nextMaxEntropy*len(nextPossibleWords)/n
+            cnt+=1
+            if cnt%200==0:
+                print("Finished",cnt,"words in",round((time.time() - startTime)/60,2),"minutes")
         if e>m:
             m=e
             ans=word
